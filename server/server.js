@@ -3,6 +3,9 @@ const Diary = require('./models/Diary');
 
 const express = require('express');
 const mongoose = require('mongoose');
+require('dotenv').config(); // 1. 최상단에 이 코드가 반드시 있어야 합니다.
+
+
 const cors = require('cors');
 require('dotenv').config();
 
@@ -15,11 +18,11 @@ const port = 5001;
 app.use(cors());
 app.use(express.json());
 
-//mongodb 연결
-mongoose.connect('mongodb+srv://zlkdjkdj:zlkdjkdj0720@cluster0.6fsxsk9.mongodb.net/?appName=Cluster0')
-    .then(()=> console.log("MongoDB 연결 성공"))
-    .catch(err => console.log("mongodb 연결 실패", err));
-
+// 3. 주소 대신 process.env.MONGO_URI를 사용합니다.
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log("MongoDB 연결 성공 (안전함)"))
+    .catch(err => console.log("MongoDB 연결 실패", err));
+    
 //기본 경로 테스트
 app.get('/', (req, res) =>{
     res.send('일기  앱 서버가 작동중입니다.');
