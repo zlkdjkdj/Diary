@@ -19,6 +19,19 @@ function App() {
     }
   };
 
+  //삭제 함수 (구현중)
+  const deleteDiary =  async (id) => {
+    if  (!window.confirm("정말 삭제 하시겠습니까?")) return;
+
+    try{
+      await axios.delete(`http://localhost:5001/api/diaries/${id}`);
+      fetchDiaries(); //삭제 후 목록 새로고침
+    } catch (error){
+      console.error("삭제 실패:", error);
+      alert("삭제 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <div className="container">
       <h1>나의 일기장</h1>
@@ -29,7 +42,7 @@ function App() {
       
       <h2>일기 목록</h2>
       {/* 목록 표시 컴포넌트 */}
-      <DiaryList diaries={diaries} />
+      <DiaryList diaries={diaries} onDelete={deleteDiary} />
     </div>
   )
 }
