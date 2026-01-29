@@ -59,26 +59,36 @@ app.get('/api/diaries', async(req, res) =>{
 
 //1. 특정 일기 상세 조회(get)
 app.get('/api/diaries/:id', async (req, res) => {
-    try{
-        const diary = await Diary.findById(req.params.id);
-        if (!diary){
-            return res.status(404).json({message : "일기를 찾을 수 없습니다."});
-        }
-        res.json(diary);
-    } catch (err) {
-        res.status(500).json({message: "데이터 조회 중 에러 발생", error:err.message});
+   try{
+    const { title, content, media } = req.body;
+
+    //id로 찾아온 내용을 업데이트함
+    const updatedDiary = await Diary.findByIdAndUpdate(
+        req.params.id,
+        { title, content, media },
+        { new : true} // 이 옵션을 넣어야 수정된 후의 최신 데이터를 반환
+    );
+
+    if (!updatedDiary){
+        return res.status(404).json({message: "수정한 일기를 찾을 수 없습니다."});
     }
-})
+
+    console.log("수정 성공!");
+    res.json(updatedDiary);
+   } catch(err){
+    res.status(400).json({message: "수정실패", error: err.message });
+    }
+});
 
 //2. 일기 수정(put)
 app.put('/api/diaries/:id', async (req, res) => {
     try{
-        const updatesDiary = await Diary.findByIdAndUpdate(
+        const updatedDiary = await Diary.findByIdAndUpdate(
             req.params.id,
             req.body,
             {new: true}
         );
-        res.json(updatesDiary);
+        res.json(updatedDiary);
     } catch (err) {
         res.status(400).json({message:"수정 실패", error:err.message});
     }
